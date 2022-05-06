@@ -1,0 +1,56 @@
+---
+title: "Mini Project"
+author: "Riya"
+date: "09/02/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(gapminder)
+library(ggplot2)
+```
+
+# Question - 1
+```{r}
+data = subset(gapminder, gapminder$year == 2007)
+View(data)
+```
+
+# Part-1
+```{r}
+ggplot(data = data, aes(x = gdpPercap, y = lifeExp)) + geom_point(aes(color = continent)) + geom_smooth(method="lm") + ylab("Life Expectancy") + xlab("GDP Per Capita") + ggtitle("GDP v/s Life Expectancy for the year 2007")
+ggplot(data = data, aes(x = gdpPercap, y = lifeExp)) + geom_point(aes(color = continent)) + geom_smooth(method="loess") + ylab("Life Expectancy") + xlab("GDP Per Capita") + ggtitle("GDP v/s Life Expectancy for the year 2007")
+```
+
+```{r}
+ggplot(data = data, aes(x = gdpPercap, y = lifeExp)) + geom_boxplot(aes(color = continent)) + ylab("Life Expectancy") + xlab("GDP Percentage") + ggtitle("GDP v/s Life Expectancy for the year 2007")
+```
+
+# Part - 2
+```{r}
+model <- lm(gdpPercap ~ lifeExp, data = data)
+data$residuals = residuals(model)
+ggplot(data, aes(sample = residuals)) + stat_qq() + stat_qq_line() 
+```
+
+From the graph, the trends cannot be well-described by a simple model such as a linear model, a more complicated model is required. This is because the main aim of the linear regression is to model a continuous variable Y as a mathematical function of one or more X variables. From the graph above we can see that the data for the year 2007 follows a hollow-up type and not a linear graph which should be approximately equal to the normal graph. The points in the grpah 1 are not spread across the linear line which proves that the graph is not linear. As, the data is not evenly spread which we can see from the point plot and the graph above where there are too many outliers that exist for the data. Having outliers in the graph while making predictions for linear model can drastically affect the predictions as they can easily affect the direction/slope of the line of best fit. 
+
+# Part - 3
+```{r}
+ggplot(data = data, aes(x = log(gdpPercap), y = lifeExp)) + geom_point(aes(color = continent)) + geom_smooth(method="lm") + ylab("Life Expectancy") + xlab("GDP Per Capita (log)") + facet_wrap(.~continent,scales = "free") + ggtitle("GDP v/s Life Expectancy for the year 2007")
+ggplot(data = data, aes(x = gdpPercap, y = lifeExp)) + geom_point(aes(color = continent)) + geom_smooth(method="lm") + ylab("Life Expectancy") + xlab("GDP Per Capita") + facet_wrap(.~continent,scales = "free") + ggtitle("GDP v/s Life Expectancy for the year 2007")
+```
+
+```{r}
+ggplot(data = data, aes(x = gdpPercap, y = lifeExp)) + stat_ecdf(aes(color = continent)) + ylab("Life Expectancy") + xlab("GDP Per Capita") + ggtitle("GDP v/s Life Expectancy for the year 2007")
+```
+Additive Shift: useful when the seasonal variation is relatively constant over time.
+Multiplicative Shift: useful when the seasonal variation increases over time.
+From the graphs we can comment that the continents follow a linear pattern when we take log of the GDP percentage. Hence, it can be concluded that the graph follows a multiplicative shift approximately. For the continent of Oceania, it is difficult to decide whether it is a multiplicative shift or an additive shift, since the data points for Oceania are less and the data seem to be very limited. Hence, Oceania can be considered as an outlier and requires a more complicated method to estimate the shift.
+
+
+
